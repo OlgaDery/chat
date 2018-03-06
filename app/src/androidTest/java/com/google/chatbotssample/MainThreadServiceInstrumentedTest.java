@@ -25,9 +25,8 @@ import static org.junit.Assert.*;
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
-public class ExampleInstrumentedTest {
+public class MainThreadServiceInstrumentedTest {
     Context appContext;
-
 
     @Rule
     public final ServiceTestRule mServiceRule = new ServiceTestRule();
@@ -35,25 +34,22 @@ public class ExampleInstrumentedTest {
 
     @Before
     public void getContext () {
+
         appContext  = InstrumentationRegistry.getTargetContext();
     }
 
-    @Test
-    public void useAppContext() throws Exception {
-
-        assertEquals("com.google.chatbotssample", appContext.getPackageName());
-    }
 
 
     @Test
     public void assertNoDatabase () {
+        //Make sure that no databases are associated with the context
         assertEquals(0, appContext.databaseList().length);
 
     }
 
     @Test
     public void testWithBoundService() throws TimeoutException {
-        // Create the service Intent.
+        // Tests the MainThreadService
         Intent serviceIntent =
                 new Intent(appContext, MainThreadService.class);
 
@@ -69,9 +65,6 @@ public class ExampleInstrumentedTest {
         // Verify that the service is working correctly.
         assertEquals(service.getIndexes().size(), Phrases.prases1.length);
     }
-
-
-
 
 
 }

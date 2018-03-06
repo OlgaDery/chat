@@ -5,6 +5,7 @@ package com.google.chatbotssample;
  */
 
 public class Phrases {
+    //phrases for pseudo bots dialog to show to user. Will be taked by randomly generated index.
 
     public static String [] prases1 = {"Do you want some tea?", "How was your day", "What are your plans for the night?",
     "Me too", "The weather is not bad", "Please turn the music on", "Send me a link to your instagram", "Lets play tennis"};

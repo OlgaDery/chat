@@ -9,13 +9,20 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Random;
 
+//This service is supposed to bind to MainActivity. It is executed in the main thread, so
+//no long running operations have to be here. The main task for this service is to generate the
+//array of index for the phrases to get selected for the dialog of bots, to put this array to the
+//intent and to pass this intent to IntentService (which is executed in the separate thread).
+
 public class MainThreadService extends Service {
 
     private static final String TAG = MainThreadService.class.getSimpleName();
+
     // Binder given to clients
     private final IBinder mBinder = new MyBinder();
     private ArrayList<Integer> indexes;
 
+    //the inner class providing the instance of this service to bind
     public class MyBinder extends Binder {
         MainThreadService getService() {
             Log.d(TAG, "enter getService()");
@@ -25,6 +32,7 @@ public class MainThreadService extends Service {
         }
     }
 
+    //getter for the array of indexes
     public ArrayList<Integer> getIndexes() {
         Log.d(TAG, "enter getIndexes()");
 
@@ -33,12 +41,14 @@ public class MainThreadService extends Service {
     }
 
 
+    //The method to be called from MainActivity. The goal is to create an intent, to put
+    //the array of indexes in it and to send to IntentService.
     public void sendIndexes() {
-        //TODO do something useful
-        Log.d(TAG, "enter sendIndexes()");
-     //   ArrayList<Integer> indexes = generateIndexes();
 
-        //TODO pass the indexes to the IntentService
+        Log.d(TAG, "enter sendIndexes()");
+
+
+        //to pass the indexes to the IntentService
         Intent intent1 = new Intent(getApplicationContext(), MyIntentService.class);
         intent1.setAction("START_DIALOG");
         intent1.putIntegerArrayListExtra("INDEXES", indexes);
@@ -47,29 +57,6 @@ public class MainThreadService extends Service {
         Log.d(TAG, "exit sendIndexes()");
     }
 
-//    @Override
-//    public int onStartCommand(Intent intent, int flags, int startId) {
-//        //TODO do something useful
-//        Log.d(TAG, "enter onStartCommand(Intent intent, int flags, int startId)");
-//
-//        if (intent != null) {
-//            final String action = intent.getAction();
-//            if ("START_DIALOG".equals(action)) {
-//                ArrayList<Integer> indexes = generateIndexes();
-//
-//                //TODO pass the indexes to the IntentService
-//                Intent intent1 = new Intent(getApplicationContext(), MyIntentService.class);
-//                intent1.setAction("START_DIALOG");
-//                intent1.putIntegerArrayListExtra("INDEXES", indexes);
-//                startService(intent1);
-//
-//            }
-//        }
-//
-//
-//        Log.d(TAG, "exit onStartCommand(Intent intent, int flags, int startId)");
-//        return Service.START_NOT_STICKY;
-//    }
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -83,6 +70,7 @@ public class MainThreadService extends Service {
     }
 
     private ArrayList<Integer> generateIndexes(){
+        //this method is to generate indexes for phrases to select
         Log.d(TAG, "enter generateIndexes()");
         indexes = new ArrayList<>(Phrases.prases1.length);
         Random mGenerator = new Random();

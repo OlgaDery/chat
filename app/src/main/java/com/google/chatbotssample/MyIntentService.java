@@ -9,14 +9,13 @@ import java.util.ArrayList;
 
 /**
  * An {@link IntentService} subclass for handling asynchronous task requests in
- * a service on a separate handler thread.
- * <p>
- * TODO: Customize class - update intent actions, extra parameters and static
- * helper methods.
+ * a service on a separate handler thread. It receives the intent with the array of indexes to
+ * select the phrases and broadcasting two types of intents with different actions. They supposed to
+ * be received by Broadcast receivers in MainActivity, in which the phrases will be selected
+ * by given indexed and shown to user.
  */
 public class MyIntentService extends IntentService {
-    // TODO: Rename actions, choose action names that describe tasks that this
-    // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
+
     private static final String TAG = MyIntentService.class.getSimpleName();
 
     public MyIntentService() {
@@ -24,13 +23,8 @@ public class MyIntentService extends IntentService {
         super("MyIntentService");
     }
 
-    /**
-     * Starts this service to perform action Foo with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    // TODO: Customize helper method
+
+    // method to send broadcasts with the action START_DIALOG2
     private void sendBroadcast2(Integer index) {
         Intent intent = new Intent();
         intent.putExtra("INDEX", index);
@@ -38,13 +32,8 @@ public class MyIntentService extends IntentService {
         getApplicationContext().sendBroadcast(intent);
     }
 
-    /**
-     * Starts this service to perform action Baz with the given parameters. If
-     * the service is already performing a task this action will be queued.
-     *
-     * @see IntentService
-     */
-    // TODO: Customize helper method
+
+    // method to send broadcasts with the action START_DIALOG1
     private void sendBroadcast1(Integer index) {
         Intent intent = new Intent();
         intent.putExtra("INDEX", index);
@@ -53,6 +42,9 @@ public class MyIntentService extends IntentService {
     }
 
     @Override
+    //main method of the class, which handles the intent from MainThreadService, creates the
+    //intents and calls the broadcast methods. To make sure that there is a reasonable gap between
+    //2 next phrases are shown, we are calling Thread.sleep() method after each breadcast.
     protected void onHandleIntent(Intent intent) {
         Log.d(TAG, "enter onHandleIntent(Intent intent)");
         if (intent != null) {
@@ -72,8 +64,6 @@ public class MyIntentService extends IntentService {
                     } catch (Exception e) {
                         Log.e(TAG, e.getMessage());
                     }
-
-
 
                 }
 

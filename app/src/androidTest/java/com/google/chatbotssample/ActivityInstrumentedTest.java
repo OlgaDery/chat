@@ -27,15 +27,18 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.assertEquals;
 
 /**
- * Instrumentation test, which will execute on an Android device.
+ * Instrumentation test, which will execute on an Android device. In this class we are testing
+ * some components of UI using the Espresso. Also, we are registering the same BroadcastReceiver
+ * as in the MainActivity and checking how it works.
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(AndroidJUnit4.class)
 public class ActivityInstrumentedTest {
-    Context appContext;
-    MainActivity activity;
-    int index = 0;
+    public Context appContext;
+    public MainActivity activity;
+    private int index = 0;
+    private static final String TAG = MyIntentService.class.getSimpleName();
 
 
     @Rule
@@ -53,29 +56,31 @@ public class ActivityInstrumentedTest {
 
     @Test
     public void testClickButton() throws TimeoutException {
-        // check the state of the view
+        // Register the receiver and the intent filter. It is expected to receive the same intent
+        //as one of the receivers of MainActivity with the same randomly selected index.
         BroadcastReceiver phraseCodeReceiver = new BroadcastReceiver () {
             @Override
             public void onReceive(Context context, Intent intent) {
-                //On receive should be called very rarely, onle the current location is significantly changed. In our case, it is calling
-                //onle once
-
                 index = intent.getIntExtra("INDEX", 0);
-
+                Log.i(TAG, "index: "+ index);
             };
 
         };
 
         IntentFilter intentFilter =
                 new IntentFilter();
-        intentFilter.addAction("START_DIALOG1"); //
+        intentFilter.addAction("START_DIALOG1");
 
-        // Register the receiver and the intent filter.
         InstrumentationRegistry.getTargetContext().registerReceiver(phraseCodeReceiver,
                 intentFilter);
 
+        //performing the button click and checking the UI behavior
+
         onView(withId(R.id.fab)).perform(click());
         onView(withId(R.id.phrase2)).check(matches(isDisplayed()));
+
+        //the phrase shown in R.id.phrase2 supposed to be the same as selected from the phrases
+        //by the index provided with the intent to the receiver registered above.
         onView(withId(R.id.phrase2)).check(matches(withText(Phrases.prases2[index])));
     }
 
